@@ -17,6 +17,11 @@ public class PlayerController : MonoBehaviour
     public float moveDuration = 1f;
     [Range(0,1)]
     public float slopeHeight = 0.35f;
+    public bool IsMoving
+    {
+        get { return isMoving; }
+    }
+
 	
 	void Start ()
 	{
