@@ -5,12 +5,14 @@ public class Candy : MonoBehaviour
 	public int score = 10;
 	ScoreText scoreText;
 	Renderer candymesh;
+	ParticleSystem particles;
 	
 	void Start ()
 	{
 		scoreText = transform.GetComponentInChildren<ScoreText>();
 		scoreText.gameObject.SetActive(false);
 		candymesh = GetComponentInChildren<Renderer>();
+		particles = GetComponentInChildren<ParticleSystem>();
 	}
 
 	void OnTriggerEnter(Collider col)
@@ -30,6 +32,9 @@ public class Candy : MonoBehaviour
 			scoreText.SetColor(textColor);
 			scoreText.SetText("+" + score.ToString());
 			scoreText.Fade();
+
+			particles.transform.SetParent(null);
+			particles.Emit(10);
 
 			transform.root.gameObject.SetActive(false);
 		}
