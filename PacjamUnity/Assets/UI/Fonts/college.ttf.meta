@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: a8a9310a28474b0438bd4c9a7d796a72
+timeCreated: 1463782265
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 2
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 1
+  characterPadding: 0
+  includeFontData: 1
+  use2xBehaviour: 0
+  fontNames:
+  - College
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 53a71352f7a0f5e49b6cbda375a4ab7c, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
