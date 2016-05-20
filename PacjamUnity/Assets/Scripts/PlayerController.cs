@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
 
 	//Public
 	public LayerMask collisionLayer;
+	public LayerMask groundLayer;
 	public AnimationCurve moveCurve;
 	public float speed = 2f;
 	public float moveDuration = 1f;
@@ -24,8 +25,8 @@ public class PlayerController : MonoBehaviour
 	bool CanMoveTo(Vector3 pos)
 	{
 		Vector3 halfScale = transform.localScale / 2;
-		halfScale.y = 0;
 		float offset = 0.98f;
+		bool canGo = true;
 
 		Vector3 top = Vector3.forward * halfScale.z * offset;
 		Vector3 bottom = Vector3.back * halfScale.z * offset;
@@ -38,6 +39,11 @@ public class PlayerController : MonoBehaviour
 		Vector3 horizontalTop = transform.position + (right * direction.x) + (top * direction.x);
 		Vector3 horizontalBottom = transform.position + (right * direction.x) + (bottom * direction.x);
 
+
+		Vector3 rayEndPos = transform.position + direction + (Vector3.up * halfScale.y);
+
+		Debug.DrawRay(rayEndPos, Vector3.down, Color.red);
+
 		float rayLength = 0.8f;
 
 		if (Mathf.Abs(direction.x) > 0)
@@ -47,7 +53,7 @@ public class PlayerController : MonoBehaviour
 			
 			if (topHit || bottomHit)
 			{
-				return false;
+				canGo = false;
 			}
 		}
 
@@ -58,8 +64,31 @@ public class PlayerController : MonoBehaviour
 
 			if (leftHit || rightHit)
 			{
-				return false;
+				canGo = false;
 			}
+		}
+
+		if (!canGo)
+		{
+			return false;
+		}
+		else
+		{
+			RaycastHit hitInfo;
+			Ray ray = new Ray(rayEndPos, Vector3.down);
+			Physics.Raycast(ray, out hitInfo, 1.5f, groundLayer);
+
+			float hitLength = 0;
+
+			if (hitInfo.transform)
+			{
+				//print("Hit something down");
+				hitLength = Vector2.Distance(hitInfo.point, rayEndPos);
+			}
+
+			float remainder = 1 - hitLength;
+			//print(remainder);
+			targetPosition.y += remainder;
 		}
 		
 		return true;
@@ -87,11 +116,14 @@ public class PlayerController : MonoBehaviour
 
 	bool HasReachedTargetPos()
 	{
-		if ( Vector3.Distance(transform.position, targetPosition) < 0.001f)
+		print(transform.position.x + " " + targetPosition.x);
+		//print(transform.position.z + " " + targetPosition.z);
+		if ( Vector3.Distance(new Vector3(transform.position.x, 0, transform.position.z), new Vector3(targetPosition.x, 0, targetPosition.z)) < 0.1f)
 		{
 			transform.position = targetPosition;
 			lerpValue = 0;
 			direction = Vector3.zero;
+			//print("has reached");
 			return true;
 		}
 
