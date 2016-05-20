@@ -2,20 +2,21 @@
 
 public class PlayerController : MonoBehaviour
 {
-	//Private
-	bool isMoving;
-	Vector3 direction;
-	Vector3 targetPosition;
-	Vector3 fromPosition;
-	Quaternion fromRotation;
-	float lerpValue;
+    //Private
+    bool isMoving;
+    Vector3 direction;
+    Vector3 targetPosition;
+    Vector3 fromPosition;
+    Quaternion fromRotation;
+    float lerpValue;
 
-	//Public
-	public LayerMask collisionLayer;
-	public LayerMask groundLayer;
-	public AnimationCurve moveCurve;
-	public float speed = 2f;
-	public float moveDuration = 1f;
+    //Public
+    public LayerMask collisionLayer;
+    public LayerMask groundLayer;
+    public AnimationCurve moveCurve;
+    public float moveDuration = 1f;
+    [Range(0,1)]
+    public float slopeHeight = 0.35f;
 	
 	void Start ()
 	{
@@ -42,7 +43,7 @@ public class PlayerController : MonoBehaviour
 
 		Vector3 rayEndPos = transform.position + direction + (Vector3.up * halfScale.y);
 
-		Debug.DrawRay(rayEndPos, Vector3.down, Color.red);
+		//Debug.DrawRay(rayEndPos, Vector3.down, Color.red);
 
 		float rayLength = 0.8f;
 
@@ -80,15 +81,26 @@ public class PlayerController : MonoBehaviour
 
 			float hitLength = 0;
 
-			if (hitInfo.transform)
-			{
-				//print("Hit something down");
-				hitLength = Vector2.Distance(hitInfo.point, rayEndPos);
-			}
+            if (hitInfo.transform)
+            {
+                //print("Hit something down");
+                hitLength = Vector2.Distance(hitInfo.point, rayEndPos);
+            }
+            else
+            {
+                return false;
+            }
+
+            
 
 			float remainder = 1 - hitLength;
-			//print(remainder);
-			targetPosition.y += remainder;
+            if (remainder > 0.35 || remainder < -0.35)
+                return false;
+
+
+            targetPosition.y += remainder;
+
+            targetPosition = new Vector3(Mathf.RoundToInt(targetPosition.x), targetPosition.y, Mathf.RoundToInt(targetPosition.z));
 		}
 		
 		return true;
@@ -98,9 +110,10 @@ public class PlayerController : MonoBehaviour
 	{
 		pos.x = Mathf.RoundToInt(pos.x);
 		pos.z = Mathf.RoundToInt(pos.z);
-		pos.y = transform.position.y;
+		//pos.y = transform.position.y;
 
-		lerpValue += Time.deltaTime * speed;
+		lerpValue += Time.deltaTime;
+        
 
 		if (lerpValue > moveDuration)
 		{
@@ -109,6 +122,8 @@ public class PlayerController : MonoBehaviour
 
 		float moveJourney = lerpValue / moveDuration;
 
+        //print(moveCurve.Evaluate(moveJourney));
+
 		Quaternion angle = Quaternion.Euler(90 * direction.z, 0, 90 * -direction.x);
 		transform.position = Vector3.MoveTowards(from, targetPosition, moveCurve.Evaluate(moveJourney));
 		transform.rotation = Quaternion.Lerp(fromRotation, angle * fromRotation, moveCurve.Evaluate(moveJourney));
@@ -116,9 +131,9 @@ public class PlayerController : MonoBehaviour
 
 	bool HasReachedTargetPos()
 	{
-		print(transform.position.x + " " + targetPosition.x);
+		//print(transform.position.x + " " + targetPosition.x);
 		//print(transform.position.z + " " + targetPosition.z);
-		if ( Vector3.Distance(new Vector3(transform.position.x, 0, transform.position.z), new Vector3(targetPosition.x, 0, targetPosition.z)) < 0.1f)
+		if ( Vector3.Distance(new Vector3(transform.position.x, 0, transform.position.z), new Vector3(targetPosition.x, 0, targetPosition.z)) < 0.01f)
 		{
 			transform.position = targetPosition;
 			lerpValue = 0;
