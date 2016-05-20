@@ -23,31 +23,46 @@ public class PlayerController : MonoBehaviour
 
 	bool CanMoveTo(Vector3 pos)
 	{
-		bool hit = Physics.Raycast(transform.position, pos - transform.position, 1f, collisionLayer);
+		Vector3 halfScale = transform.localScale / 2;
+		halfScale.y = 0;
+		float offset = 0.98f;
 
-		return !hit;
-	}
+		Vector3 top = Vector3.forward * halfScale.z * offset;
+		Vector3 bottom = Vector3.back * halfScale.z * offset;
+		Vector3 right = Vector3.right * halfScale.x * offset;
+		Vector3 left = Vector3.left * halfScale.x * offset;
 
-	void MoveTo(Vector3 pos)
-	{
-		pos.x = Mathf.RoundToInt(pos.x);
-		pos.z = Mathf.RoundToInt(pos.z);
-		pos.y = transform.position.y;
+		Vector3 verticalRight = transform.position + (top * direction.z) + (right * direction.x);
+		Vector3 verticalLeft = transform.position + (top * direction.z) + (left * direction.x);
 
-		transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveCurve.Evaluate(Time.time) * speed * Time.deltaTime);
-	}
+		Vector3 horizontalTop = transform.position + (right * direction.x) + (top * direction.x);
+		Vector3 horizontalBottom = transform.position + (right * direction.x) + (bottom * direction.x);
 
-	bool HasReachedTargetPos()
-	{
-		if ( Vector3.Distance(transform.position, targetPosition) < 0.001f)
+		float rayLength = 0.8f;
+
+		if (Mathf.Abs(direction.x) > 0)
 		{
-			transform.position = targetPosition;
-			lerpValue = 0;
-			direction = Vector3.zero;
-			return true;
+			bool topHit = Physics.Raycast(horizontalTop, direction, rayLength, collisionLayer);
+			bool bottomHit = Physics.Raycast(horizontalBottom, direction, rayLength, collisionLayer);
+			
+			if (topHit || bottomHit)
+			{
+				return false;
+			}
 		}
 
-		return false;
+		if (Mathf.Abs(direction.z) > 0)
+		{
+			bool leftHit = Physics.Raycast(verticalLeft, direction, rayLength, collisionLayer);
+			bool rightHit = Physics.Raycast(verticalRight, direction, rayLength, collisionLayer);
+
+			if (leftHit || rightHit)
+			{
+				return false;
+			}
+		}
+		
+		return true;
 	}
 
 	void MoveTo(Vector3 from, Vector3 pos, Quaternion fromRot)
@@ -70,25 +85,52 @@ public class PlayerController : MonoBehaviour
 		transform.rotation = Quaternion.Lerp(fromRotation, angle * fromRotation, moveCurve.Evaluate(moveJourney));
 	}
 
+	bool HasReachedTargetPos()
+	{
+		if ( Vector3.Distance(transform.position, targetPosition) < 0.001f)
+		{
+			transform.position = targetPosition;
+			lerpValue = 0;
+			direction = Vector3.zero;
+			return true;
+		}
+
+		return false;
+	}
+
+	Vector3 GetMovedir()
+	{
+		float dirX = Input.GetAxisRaw("Horizontal");
+		float dirZ = Input.GetAxisRaw("Vertical");
+
+		float threshold = 0.25f;
+
+		if (dirX > threshold)
+		{
+			return Vector3.right;
+		}
+		else if (dirX < -threshold)
+		{
+			return Vector3.left;
+		}
+
+		if (dirZ > threshold)
+		{
+			return Vector3.forward;
+		}
+		else if (dirZ < -threshold)
+		{
+			return Vector3.back;
+		}
+
+		return Vector3.zero;
+	}
+
 	void Update ()
 	{
 		if (!isMoving)
 		{
-			float dirX = Input.GetAxisRaw("Horizontal");
-			float dirZ = Input.GetAxisRaw("Vertical");
-
-			if (Mathf.Abs(dirX) > 0f)
-			{
-				direction.x = dirX;
-				direction.z = 0;
-			}
-			else if (Mathf.Abs(dirZ) > 0f)
-			{
-				direction.x = 0;
-				direction.z = dirZ;
-			}
-
-			print(direction);
+			direction = GetMovedir();
 
 			targetPosition = transform.position + direction;
 			fromPosition = transform.position;
@@ -102,7 +144,8 @@ public class PlayerController : MonoBehaviour
 				}
 			}
 		}
-		else
+		
+		if (isMoving)
 		{
 			MoveTo(fromPosition, targetPosition, fromRotation);
 
