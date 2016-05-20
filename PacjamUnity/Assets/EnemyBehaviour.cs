@@ -7,22 +7,22 @@ public class EnemyBehaviour : MonoBehaviour
     public float speed;
     public float detectRange = 8;
     public bool trapped = false;
-
+	
     //Private
     Rigidbody rigidbody;
+	NavMeshAgent nma;
 
 	void Start ()
 	{
         rigidbody = GetComponent<Rigidbody>();
+		nma = GetComponent<NavMeshAgent>();
 	}
 	
 	void Update ()
 	{
         if (target)
-            if (Vector3.Distance(transform.position, target.transform.position) < detectRange)
         {
-            transform.LookAt(target.transform.position);
-            rigidbody.velocity = transform.forward * speed;
+			nma.SetDestination(target.transform.position);
         }
 	}
 
@@ -30,23 +30,16 @@ public class EnemyBehaviour : MonoBehaviour
     {
         if (col.gameObject.tag == "Player")
         {
-			if (col.gameObject.GetComponent<PlayerController>().IsMoving)
+			PlayerController pc = col.gameObject.GetComponent<PlayerController>();
+			print(pc.MoveToAngle.eulerAngles);
+			if (pc.IsMoving)
 			{
-				Vector3 posUp = (col.transform.position + col.transform.up);
-				Vector3 posDown = (col.transform.position + col.transform.up);
-
-				if (posUp.y - 0.5f > col.transform.position.y)
-				{
-					print("Correct!");
-				}
-				else
-				{
-					print("Not Correct rotation");
-				}
-			}
-			else
-			{
-				print("Player not moving");
+				if (pc.MoveToAngle.x == 0 || pc.MoveToAngle.x == 180)
+					if (pc.MoveToAngle.z == 0 || pc.MoveToAngle.z == 180)
+					{
+						print("Correct");
+					}
+				
 			}
         }
     }

@@ -8,7 +8,9 @@ public class PlayerController : MonoBehaviour
     Vector3 targetPosition;
     Vector3 fromPosition;
     Quaternion fromRotation;
-    float lerpValue;
+	Quaternion moveToAngle;
+
+	float lerpValue;
 
     //Public
     public LayerMask collisionLayer;
@@ -21,6 +23,10 @@ public class PlayerController : MonoBehaviour
     {
         get { return isMoving; }
     }
+	public Quaternion MoveToAngle
+		{
+		get { return moveToAngle; }
+		}
 
 	
 	void Start ()
@@ -129,9 +135,9 @@ public class PlayerController : MonoBehaviour
 
         //print(moveCurve.Evaluate(moveJourney));
 
-		Quaternion angle = Quaternion.Euler(90 * direction.z, 0, 90 * -direction.x);
+		moveToAngle = Quaternion.Euler(90 * direction.z, 0, 90 * -direction.x) * fromRotation;
 		transform.position = Vector3.MoveTowards(from, targetPosition, moveCurve.Evaluate(moveJourney));
-		transform.rotation = Quaternion.Lerp(fromRotation, angle * fromRotation, moveCurve.Evaluate(moveJourney));
+		transform.rotation = Quaternion.Lerp(fromRotation, moveToAngle, moveCurve.Evaluate(moveJourney));
 	}
 
 	bool HasReachedTargetPos()
