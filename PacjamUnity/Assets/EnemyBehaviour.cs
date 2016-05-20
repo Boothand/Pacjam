@@ -25,22 +25,4 @@ public class EnemyBehaviour : MonoBehaviour
 			nma.SetDestination(target.transform.position);
         }
 	}
-
-    void OnCollisionEnter(Collision col)
-    {
-        if (col.gameObject.tag == "Player")
-        {
-			PlayerController pc = col.gameObject.GetComponent<PlayerController>();
-			print(pc.MoveToAngle.eulerAngles);
-			if (pc.IsMoving)
-			{
-				if (pc.MoveToAngle.x == 0 || pc.MoveToAngle.x == 180)
-					if (pc.MoveToAngle.z == 0 || pc.MoveToAngle.z == 180)
-					{
-						print("Correct");
-					}
-				
-			}
-        }
-    }
 }

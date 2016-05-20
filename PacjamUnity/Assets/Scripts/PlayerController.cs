@@ -12,9 +12,14 @@ public class PlayerController : MonoBehaviour
 
 	float lerpValue;
 
+	Transform trappedTarget;
+
     //Public
+	public HoleTrigger[] holeTriggers;
+
     public LayerMask collisionLayer;
     public LayerMask groundLayer;
+	public LayerMask enemyLayer;
     public AnimationCurve moveCurve;
     public float moveDuration = 1f;
     [Range(0,1)]
@@ -27,12 +32,6 @@ public class PlayerController : MonoBehaviour
 		{
 		get { return moveToAngle; }
 		}
-
-	
-	void Start ()
-	{
-		
-	}
 
 	bool CanMoveTo(Vector3 pos)
 	{
@@ -184,6 +183,28 @@ public class PlayerController : MonoBehaviour
 		return Vector3.zero;
 	}
 
+	void EnemyCollision()
+	{
+		if (!trappedTarget)
+		{
+			RaycastHit hit;
+			Physics.Raycast(transform.position, direction, out hit, 1, enemyLayer);
+			if (hit.transform)
+			{
+				foreach (HoleTrigger hole in holeTriggers)
+				{
+					if (hole.collisionObject == hit.transform.gameObject)
+					{
+						trappedTarget = hole.collisionObject.transform;
+						trappedTarget.SetParent(transform);
+						trappedTarget.localPosition = Vector3.zero;
+						trappedTarget.up = transform.up;
+					}
+				}
+			}
+		}
+	}
+
 	void Update ()
 	{
 		if (!isMoving)
@@ -206,7 +227,7 @@ public class PlayerController : MonoBehaviour
 		if (isMoving)
 		{
 			MoveTo(fromPosition, targetPosition, fromRotation);
-
+			EnemyCollision();
 			if (HasReachedTargetPos())
 			{
 				isMoving = false;
