@@ -36,6 +36,8 @@ public class Candy : MonoBehaviour
 			particles.transform.SetParent(null);
 			particles.Emit(10);
 
+			GameManager.candyAmount--;
+
 			transform.root.gameObject.SetActive(false);
 		}
 	}
