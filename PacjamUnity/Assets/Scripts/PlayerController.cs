@@ -28,10 +28,6 @@ public class PlayerController : MonoBehaviour
     {
         get { return isMoving; }
     }
-	public Quaternion MoveToAngle
-		{
-		get { return moveToAngle; }
-		}
 
 	bool CanMoveTo(Vector3 pos)
 	{
@@ -199,6 +195,7 @@ public class PlayerController : MonoBehaviour
 						trappedTarget.SetParent(transform);
 						trappedTarget.localPosition = Vector3.zero;
 						trappedTarget.up = transform.up;
+						trappedTarget.GetComponent<EnemyBehaviour>().GetCaught();
 					}
 				}
 			}
