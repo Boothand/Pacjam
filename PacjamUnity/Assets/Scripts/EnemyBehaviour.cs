@@ -21,6 +21,7 @@ public class EnemyBehaviour : MonoBehaviour
 	public AnimationCurve dropCurve;
 	public LayerMask groundLayer;
 	public LayerMask collisionLayer;
+	public LayerMask friendLayer;
 	public float dropSpeed = 1f;
 
 	void Start ()
@@ -95,6 +96,16 @@ public class EnemyBehaviour : MonoBehaviour
 			}
 		}
 
+		if (Mathf.Abs(direction.magnitude) > 0)
+		{
+			bool friendHit = Physics.Raycast(transform.position, direction, 1.5f, friendLayer);
+
+			if (friendHit)
+			{
+				return false;
+			}
+		}
+
 		if (!canGo)
 		{
 			return false;
@@ -159,7 +170,7 @@ public class EnemyBehaviour : MonoBehaviour
 		distanceToTarget.x = Mathf.Round(distanceToTarget.x);
 		distanceToTarget.z = Mathf.Round(distanceToTarget.z);
 
-		print("I must go " + distanceToTarget.x + " units in X, and " + distanceToTarget.z + " units in Z.");
+		//print("I must go " + distanceToTarget.x + " units in X, and " + distanceToTarget.z + " units in Z.");
 
 		float dirToGo = (distanceToTarget.x > distanceToTarget.z) ? distanceToTarget.x : distanceToTarget.z;
 		float xDir, zDir = 0;
