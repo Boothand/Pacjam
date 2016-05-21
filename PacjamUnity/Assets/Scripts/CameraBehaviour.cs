@@ -19,30 +19,18 @@ public class CameraBehaviour : MonoBehaviour
 			loadPositionGoal = GameManager.instance.transform.FindChild("LoadPositionGoal");
 			gamePositionGoal = GameManager.instance.transform.FindChild("GamePositionGoal");
 		}
-
-		switch (GameManager.instance.state)
-		{
-			case GameManager.States.SceneLoad:
-				transform.position = loadPositionGoal.position;
-				transform.rotation = loadPositionGoal.rotation;
-				break;
-			case GameManager.States.SceneRun:
-				transform.position = gamePositionGoal.position;
-				transform.rotation = gamePositionGoal.rotation;
-				break;
-			case GameManager.States.SceneSuccess:
-			case GameManager.States.SceneDead:
-				Vector3 playerPos = GameManager.instance.player.transform.position;
-				transform.position = Vector3.Lerp(transform.position, playerPos, playerViewOffset);
-				transform.rotation = Quaternion.LookRotation(playerPos - transform.position, Vector3.up);
-				break;
-		}
+		transform.position = loadPositionGoal.position;
+		transform.rotation = loadPositionGoal.rotation;
 	}
 	
 	void Update ()
 	{
 		switch (GameManager.instance.state)
 		{
+			case GameManager.States.SceneInfo:
+				targetPosition = loadPositionGoal.position;
+				targetRotation = loadPositionGoal.rotation;
+				break;
 			case GameManager.States.SceneLoad:
 			case GameManager.States.SceneRun:
 				targetPosition = gamePositionGoal.position;

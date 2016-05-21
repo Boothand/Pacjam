@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
 	public enum States
 	{
 		MainMenu,
+		SceneInfo,
 		SceneLoad,
 		SceneRun,
 		SceneSuccess,
@@ -50,6 +51,14 @@ public class GameManager : MonoBehaviour
 	
 	void Update ()
 	{
+		if (state == States.SceneInfo)
+		{
+			if (Input.GetButtonDown("Submit"))
+			{
+				state = States.SceneLoad;
+			}
+		}
+
 		if (candyAmount <= 0 && state == States.SceneRun)
 		{
 			state = States.SceneSuccess;

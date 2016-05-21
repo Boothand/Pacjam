@@ -9,7 +9,6 @@ public class StarSlab : MonoBehaviour
 
 	public GameObject player;
 	public bool fastSpawn;
-	bool spawnEnd = false;
 	public AnimationCurve startAnimation;
 	public float animationSpeed = 0.3f;
 	float animationStep = 0f;
@@ -32,7 +31,7 @@ public class StarSlab : MonoBehaviour
 	
 	void Update ()
 	{
-		if (!spawnEnd && player && !fastSpawn)
+		if (GameManager.instance.state == GameManager.States.SceneLoad && player && !fastSpawn)
 		{
 			animationStep += Time.deltaTime;
 			player.transform.position = new Vector3(transform.position.x, startAnimation.Evaluate(animationStep * animationSpeed), transform.position.z);
