@@ -177,6 +177,9 @@ public class EnemyBehaviour : MonoBehaviour
 
 	void Update ()
 	{
+		if (GameManager.instance.state != GameManager.States.SceneRun)
+			return;
+
 		direction = Vector3.zero;
 
 		if (target)

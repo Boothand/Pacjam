@@ -3,20 +3,52 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-	public Scene nextScene;
-	public static int candyAmount;
+	//public static
+	public static GameManager instance;
+	public static int score;
 	
-	void Start ()
+	public int candyAmount;
+
+	public States state = States.MainMenu;
+	public enum States
 	{
-		
+		MainMenu,
+		SceneLoad,
+		SceneRun,
+		SceneSuccess,
+		SceneDead
 	}
+
+	void Awake()
+	{
+		if (!instance)
+		{
+			instance = this;
+			DontDestroyOnLoad(gameObject);
+		}
+		else
+		{
+			Destroy(gameObject);
+		}
+	}
+
+	public void SceneStart()
+	{
+		state = States.SceneRun;
+	}
+
+	public void SceneGoToNext()
+	{
+		state = States.SceneLoad;
+		SceneManager.LoadScene(GameObject.FindObjectOfType<NextLevel>().sceneName);
+	}
+	
 	
 	void Update ()
 	{
-		if (candyAmount <= 0)
+		if (candyAmount <= 0 && state == States.SceneRun)
 		{
-			//Inititate happy animations, ballons, stuff...
-			print("Took all candiez");
+			state = States.SceneSuccess;
 		}
 	}
 }

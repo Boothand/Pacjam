@@ -22,6 +22,7 @@ public class Candy : MonoBehaviour
 			Stats player = col.GetComponent<Stats>();
 
 			player.Score += score;
+			GameManager.score += score;
 
 			scoreText.gameObject.SetActive(true);
 			scoreText.transform.SetParent(null);
@@ -36,7 +37,7 @@ public class Candy : MonoBehaviour
 			particles.transform.SetParent(null);
 			particles.Emit(10);
 
-			GameManager.candyAmount--;
+			GameManager.instance.candyAmount--;
 
 			transform.root.gameObject.SetActive(false);
 		}
