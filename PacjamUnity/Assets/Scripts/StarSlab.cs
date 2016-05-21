@@ -32,7 +32,10 @@ public class StarSlab : MonoBehaviour
 			animationStep += Time.deltaTime;
 			player.transform.position = new Vector3(transform.position.x, startAnimation.Evaluate(animationStep * animationSpeed), transform.position.z);
 			if (animationStep * animationSpeed > 1)
+			{
+				GameManager.instance.SceneStart();
 				Destroy(this);
+			}
 		}
 
 		if (started)

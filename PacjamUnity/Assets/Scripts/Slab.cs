@@ -10,7 +10,7 @@ public class Slab : MonoBehaviour
 		if (candy)
 		{
 			Instantiate(candy, transform.position + Vector3.up * groundOffset, candy.transform.rotation);
-			GameManager.candyAmount++;
+			GameManager.instance.candyAmount++;
 		}
 	}
 }
