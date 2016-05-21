@@ -3,6 +3,9 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+	//
+	[HideInInspector] public ScoreIndicator scoreScript;
+
 	//public static
 	public static GameManager instance;
 	public static int score;

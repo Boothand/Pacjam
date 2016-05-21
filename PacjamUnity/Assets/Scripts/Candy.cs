@@ -38,6 +38,7 @@ public class Candy : MonoBehaviour
 			particles.Emit(10);
 
 			GameManager.instance.candyAmount--;
+			GameManager.instance.scoreScript.PlayWobbleAnimation();
 
 			transform.root.gameObject.SetActive(false);
 		}
