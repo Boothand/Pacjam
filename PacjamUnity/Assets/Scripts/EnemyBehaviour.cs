@@ -202,6 +202,8 @@ public class EnemyBehaviour : MonoBehaviour
 		{
 			MoveTo(fromPosition, targetPosition);
 
+			transform.forward = Vector3.Lerp(transform.forward, direction, Time.deltaTime * 3);
+
 			if (HasReachedTargetPos())
 			{
 				isMoving = false;

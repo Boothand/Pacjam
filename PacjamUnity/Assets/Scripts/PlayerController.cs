@@ -191,6 +191,7 @@ public class PlayerController : MonoBehaviour
 				{
 					if (hole.collisionObject == hit.transform.gameObject)
 					{
+						hit.transform.GetComponent<Collider>().enabled = false;
 						trappedTarget = hole.collisionObject.transform;
 						trappedTarget.SetParent(transform);
 						trappedTarget.localPosition = Vector3.zero;
