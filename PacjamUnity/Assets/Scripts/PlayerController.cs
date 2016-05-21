@@ -209,6 +209,24 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
+	void EnemyDrop()
+	{
+		if (trappedTarget && HasReachedTargetPos())
+		{
+			trappedTarget.transform.SetParent(null);
+			trappedTarget.GetComponent<EnemyBehaviour>().GetDropped();
+			trappedTarget = null;
+		}
+	}
+
+	void OnTriggerStay(Collider col)
+	{
+		if (col.tag == "DropCheck")
+		{
+			EnemyDrop();
+		}
+	}
+
 	void Update ()
 	{
 		if (!isMoving)

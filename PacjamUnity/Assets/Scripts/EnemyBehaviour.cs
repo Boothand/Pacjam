@@ -8,6 +8,9 @@ public class EnemyBehaviour : MonoBehaviour
 	Vector3 direction;
 	Vector3 fromPosition;
 	bool isMoving;
+	bool dropped;
+	float dropStep = 0;
+	Vector3 dropPoint;
 
     //Public
     public PlayerController target;
@@ -15,8 +18,10 @@ public class EnemyBehaviour : MonoBehaviour
     public float detectRange = 8;
 	public bool trapped;
 	public AnimationCurve moveCurve;
+	public AnimationCurve dropCurve;
 	public LayerMask groundLayer;
 	public LayerMask collisionLayer;
+	public float dropSpeed = 1f;
 
 	void Start ()
 	{
@@ -175,8 +180,27 @@ public class EnemyBehaviour : MonoBehaviour
 		return dir;
 	}
 
+	public void GetDropped()
+	{
+		Rigidbody rb = GetComponent<Rigidbody>();
+
+		rb.isKinematic = false;
+		rb.constraints = RigidbodyConstraints.None;
+		transform.FindChild("Skeleton").gameObject.SetActive(false);
+		dropped = true;
+		dropPoint = transform.position;
+	}
+
+
+
 	void Update ()
 	{
+		if (dropped)
+		{
+			transform.position = dropPoint + Vector3.up * dropCurve.Evaluate(dropStep);
+			dropStep += Time.deltaTime;
+		}
+
 		if (GameManager.instance.state != GameManager.States.SceneRun)
 			return;
 
