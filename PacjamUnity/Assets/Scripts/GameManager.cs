@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
 	public static int score;
 	
 	public int candyAmount;
+	public PlayerController player;
 
 	public States state = States.MainMenu;
 	public enum States
