@@ -3,6 +3,8 @@
 public class EnemyBehaviour : MonoBehaviour
 {
 	//Private
+	Animator anim;
+	AudioSource audioSrc;
 	float lerpValue;
 	Vector3 targetPosition;
 	Vector3 direction;
@@ -30,6 +32,9 @@ public class EnemyBehaviour : MonoBehaviour
 		{
 			target = GameObject.Find("Wobbly").GetComponent<PlayerController>();
 		}
+
+		anim = GetComponent<Animator>();
+		audioSrc = GetComponentInChildren<AudioSource>();
 	}
 
 	void MoveTo(Vector3 from, Vector3 pos)
@@ -152,6 +157,7 @@ public class EnemyBehaviour : MonoBehaviour
 			transform.position = targetPosition;
 			lerpValue = 0;
 			direction = Vector3.zero;
+			audioSrc.Play();
 
 			return true;
 		}
@@ -214,8 +220,7 @@ public class EnemyBehaviour : MonoBehaviour
 
 		if (GameManager.instance.state != GameManager.States.SceneRun)
 			return;
-
-		direction = Vector3.zero;
+		
 
 		if (target)
         {
@@ -232,6 +237,7 @@ public class EnemyBehaviour : MonoBehaviour
 				if (CanMoveTo(targetPosition))
 				{
 					isMoving = true;
+					anim.SetTrigger("Jump");
 				}
 			}
 		}
@@ -240,7 +246,7 @@ public class EnemyBehaviour : MonoBehaviour
 		{
 			MoveTo(fromPosition, targetPosition);
 
-			transform.forward = Vector3.Lerp(transform.forward, direction, Time.deltaTime * 3);
+			transform.forward = Vector3.Slerp(transform.forward, direction, Time.deltaTime * 3);
 
 			if (HasReachedTargetPos())
 			{
