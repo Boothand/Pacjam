@@ -16,6 +16,11 @@ public class StarSlab : MonoBehaviour
 
 	void Start ()
 	{
+		if (!player)
+		{
+			player = GameObject.Find("Wobbly");
+		}
+
 		if (fastSpawn) //used while debugging
 		{
 			player.transform.position = transform.position + Vector3.up * 0.5f;
@@ -61,6 +66,7 @@ public class StarSlab : MonoBehaviour
 		{
 			started = true;
 			GetComponentInChildren<ParticleSystem>().Emit(75);
+			GetComponentInChildren<AudioSource>().Play();
 		}
 	}
 }

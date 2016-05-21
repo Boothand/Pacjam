@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     Vector3 fromPosition;
     Quaternion fromRotation;
 	Quaternion moveToAngle;
+	AudioSource audioSrc;
 
 	float lerpValue;
 
@@ -28,6 +29,11 @@ public class PlayerController : MonoBehaviour
     {
         get { return isMoving; }
     }
+
+	void Start()
+	{
+		audioSrc = GetComponentInChildren<AudioSource>();
+	}
 
 	bool CanMoveTo(Vector3 pos)
 	{
@@ -144,7 +150,7 @@ public class PlayerController : MonoBehaviour
 			transform.position = targetPosition;
 			lerpValue = 0;
 			direction = Vector3.zero;
-			//print("has reached");
+			audioSrc.Play();
 			return true;
 		}
 
