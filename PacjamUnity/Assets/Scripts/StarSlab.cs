@@ -2,40 +2,35 @@
 
 public class StarSlab : MonoBehaviour
 {
-	public bool started = false;
+	bool started = false;
 	public float rotationSpeed = 360;
 	float rotation = 0;
 	public float rotationEnd = 1080;
 
 	public GameObject player;
-	GameObject ppl;
 	public bool fastSpawn;
 	bool spawnEnd = false;
 	public AnimationCurve startAnimation;
-	public float animationSpeed = 0.2f;
+	public float animationSpeed = 0.3f;
 	float animationStep = 0f;
 
 	void Start ()
 	{
 		if (fastSpawn) //used while debugging
 		{
-			Instantiate(player, transform.position + transform.up * 0.5f, player.transform.rotation);
+			player.transform.position = transform.position + Vector3.up * 0.5f;
 			started = true;
 			rotation = rotationEnd;
 			Destroy(this);
-		}
-		else
-		{
-			ppl = Instantiate(player, transform.position - transform.up * 10f, player.transform.rotation) as GameObject;
 		}
 	}
 	
 	void Update ()
 	{
-		if (!spawnEnd && ppl)
+		if (!spawnEnd && player && !fastSpawn)
 		{
 			animationStep += Time.deltaTime;
-			ppl.transform.position = new Vector3(transform.position.x, startAnimation.Evaluate(animationStep * animationSpeed), transform.position.z);
+			player.transform.position = new Vector3(transform.position.x, startAnimation.Evaluate(animationStep * animationSpeed), transform.position.z);
 			if (animationStep * animationSpeed > 1)
 				Destroy(this);
 		}
@@ -62,6 +57,7 @@ public class StarSlab : MonoBehaviour
 		if (!started)
 		{
 			started = true;
+			GetComponentInChildren<ParticleSystem>().Emit(75);
 		}
 	}
 }
