@@ -10,7 +10,7 @@ public class PlayerController : MonoBehaviour
     Quaternion fromRotation;
 	Quaternion moveToAngle;
 	AudioSource audioSrc;
-
+	bool isDead;
 	float lerpValue;
 
 	Transform trappedTarget;
@@ -25,6 +25,7 @@ public class PlayerController : MonoBehaviour
     public float moveDuration = 1f;
     [Range(0,1)]
     public float slopeHeight = 0.35f;
+
     public bool IsMoving
     {
         get { return isMoving; }
@@ -33,6 +34,38 @@ public class PlayerController : MonoBehaviour
 	void Start()
 	{
 		audioSrc = GetComponentInChildren<AudioSource>();
+		GameManager.instance.player = this;
+	}
+
+	void OnCollisionEnter(Collision col)
+	{
+		if (col.transform.GetComponent<EnemyBehaviour>())
+		{
+			if (!isDead)
+			{
+				Die();
+			}
+		}
+	}
+
+	void Die()
+	{
+		isDead = true;
+		GameManager.instance.state = GameManager.States.SceneDead;
+
+		//Edit the wobbly joints.
+		foreach (Transform child in transform.FindChild("Skeleton"))
+		{
+			HingeJoint joint = child.GetComponent<HingeJoint>();
+			JointSpring spring = joint.spring;
+			//spring.damper = 2f;
+			spring.spring = 0f;
+
+			joint.spring = spring;
+		}
+	
+		//Animation.
+		//Timers, states.
 	}
 
 	bool CanMoveTo(Vector3 pos)
@@ -223,36 +256,43 @@ public class PlayerController : MonoBehaviour
 	{
 		if (col.tag == "DropCheck")
 		{
-			EnemyDrop();
+			if (trappedTarget)
+			{
+				EnemyDrop();
+				col.transform.root.GetComponent<DumpingSlab>().PlaySound();
+			}
 		}
 	}
 
 	void Update ()
 	{
-		if (!isMoving)
+		if (!isDead)
 		{
-			direction = GetMovedir();
-
-			targetPosition = transform.position + direction;
-			fromPosition = transform.position;
-			fromRotation = transform.rotation;
-
-			if (Mathf.Abs(direction.magnitude) > 0)
+			if (!isMoving)
 			{
-				if (CanMoveTo(targetPosition))
+				direction = GetMovedir();
+
+				targetPosition = transform.position + direction;
+				fromPosition = transform.position;
+				fromRotation = transform.rotation;
+
+				if (Mathf.Abs(direction.magnitude) > 0)
 				{
-					isMoving = true;
+					if (CanMoveTo(targetPosition))
+					{
+						isMoving = true;
+					}
 				}
 			}
-		}
-		
-		if (isMoving)
-		{
-			MoveTo(fromPosition, targetPosition, fromRotation);
-			EnemyCollision();
-			if (HasReachedTargetPos())
+
+			if (isMoving)
 			{
-				isMoving = false;
+				MoveTo(fromPosition, targetPosition, fromRotation);
+				EnemyCollision();
+				if (HasReachedTargetPos())
+				{
+					isMoving = false;
+				}
 			}
 		}
 	}
