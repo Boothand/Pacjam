@@ -5,10 +5,12 @@ public class GameManager : MonoBehaviour
 {
 	//
 	[HideInInspector] public ScoreIndicator scoreScript;
+	[HideInInspector] public LivesIndicator livesScript;
 
 	//public static
 	public static GameManager instance;
 	public static int score;
+	public static int lives = 3;
 	
 	public int candyAmount;
 	public PlayerController player;
@@ -44,8 +46,24 @@ public class GameManager : MonoBehaviour
 
 	public void SceneGoToNext()
 	{
-		state = States.SceneLoad;
+		GameManager.instance.candyAmount = 0;
+		state = States.SceneInfo;
 		SceneManager.LoadScene(GameObject.FindObjectOfType<NextLevel>().sceneName);
+	}
+
+	public void RestartLevel()
+	{
+		GameManager.instance.candyAmount = 0;
+		if (GameManager.lives > 0)
+		{
+			state = States.SceneInfo;
+			SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+		}
+		else
+		{
+			state = States.MainMenu;
+			SceneManager.LoadScene(0);
+		}
 	}
 	
 	

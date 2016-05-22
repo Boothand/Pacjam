@@ -11,6 +11,9 @@ public class PlayerController : MonoBehaviour
 	Quaternion moveToAngle;
 	AudioSource audioSrc;
 	bool isDead;
+	public float timeSpentDead = 0f;
+	public float timeSpentVictory = 0f;
+	[SerializeField] float resurrectTime = 3f;
 	float lerpValue;
 
 	Transform trappedTarget;
@@ -52,6 +55,8 @@ public class PlayerController : MonoBehaviour
 	{
 		isDead = true;
 		GameManager.instance.state = GameManager.States.SceneDead;
+		GameManager.instance.livesScript.PlayWobbleAnimation();
+		GameManager.lives--;
 
 		//Edit the wobbly joints.
 		foreach (Transform child in transform.FindChild("Skeleton"))
@@ -294,6 +299,15 @@ public class PlayerController : MonoBehaviour
 					isMoving = false;
 				}
 			}
+		}
+		if (isDead)
+		{
+			if (timeSpentDead >= resurrectTime)
+			{
+				GameManager.instance.RestartLevel();
+			}
+			else
+				timeSpentDead += Time.deltaTime;
 		}
 	}
 }
