@@ -20,6 +20,6 @@ public class ScoreIndicator : MonoBehaviour
 	
 	void Update ()
 	{
-		textField.text = GameManager.score.ToString() + "x";
+		textField.text = GameManager.instance.player.candy.ToString() + "x";
 	}
 }
