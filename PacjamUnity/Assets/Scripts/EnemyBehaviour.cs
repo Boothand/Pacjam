@@ -13,6 +13,7 @@ public class EnemyBehaviour : MonoBehaviour
 	bool dropped;
 	float dropStep = 0;
 	Vector3 dropPoint;
+	[SerializeField] bool celebrating;
 
     //Public
     public PlayerController target;
@@ -213,6 +214,11 @@ public class EnemyBehaviour : MonoBehaviour
 	void Update ()
 	{
 		if (GameManager.instance.state == GameManager.States.SceneDead)
+		{
+			celebrating = true;
+		}
+
+		if (celebrating)
 		{
 			anim.SetTrigger("Celebrate");
 		}
