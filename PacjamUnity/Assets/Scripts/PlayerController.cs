@@ -2,37 +2,46 @@
 
 public class PlayerController : MonoBehaviour
 {
-    //Private
-    bool isMoving;
-    Vector3 direction;
-    Vector3 targetPosition;
-    Vector3 fromPosition;
-    Quaternion fromRotation;
-	Quaternion moveToAngle;
+	[Header("Other")]
 	AudioSource audioSrc;
-	bool isDead;
-	public float timeSpentDead = 0f;
-	public float timeSpentVictory = 0f;
-	[SerializeField] float resurrectTime = 3f;
+
+	[Header("Movement")]
+	public AnimationCurve moveCurve;
+	public float moveDuration = 1f;
+	[Range(0, 1)] public float slopeHeight = 0.35f;
+	bool isMoving;
+	Vector3 direction;
+	Vector3 targetPosition;
+	Vector3 fromPosition;
+	Quaternion fromRotation;
+	Quaternion moveToAngle;
 	float lerpValue;
 
+	[Header("Collision")]
+	public HoleTrigger[] holeTriggers;
 	Transform trappedTarget;
 
-    //Public
-	public HoleTrigger[] holeTriggers;
-
-    public LayerMask collisionLayer;
-    public LayerMask groundLayer;
+	[Header("Layers")]
+	public LayerMask collisionLayer;
+	public LayerMask groundLayer;
 	public LayerMask enemyLayer;
-    public AnimationCurve moveCurve;
-    public float moveDuration = 1f;
-    [Range(0,1)]
-    public float slopeHeight = 0.35f;
 
-    public bool IsMoving
-    {
-        get { return isMoving; }
-    }
+	[Header("Animations")]
+	[SerializeField] float resurrectTime = 3f;
+	[SerializeField] float victoryTime = 3f;
+	[SerializeField] float victoryTimeEnd = 6f;
+	[SerializeField] AnimationCurve victoryCurve;
+	[SerializeField] float victoryAnimationSpeed = 0.3f;
+	Vector3 victoryStartPos;
+	bool isDead;
+	bool isVictory;
+	public float timeSpentDead = 0f;
+	public float timeSpentVictory = 0f;
+
+	[Header("Stats")]
+	public int candy = 0;
+	public float timeUsed = 0f;
+	public int kills = 0;
 
 	void Start()
 	{
@@ -308,6 +317,24 @@ public class PlayerController : MonoBehaviour
 			}
 			else
 				timeSpentDead += Time.deltaTime;
+		}
+
+		if (GameManager.instance.state == GameManager.States.SceneSuccess)
+		{
+			if (!isVictory)
+			{
+				victoryStartPos = transform.position;
+				isVictory = true;
+			}
+
+			timeSpentVictory += Time.deltaTime * victoryAnimationSpeed;
+			transform.position = victoryStartPos + Vector3.up * victoryCurve.Evaluate(timeSpentVictory);
+
+			if (timeSpentVictory >= 1)
+			{
+				//GameManager.instance.SceneGoToNext();
+				GameManager.instance.state = GameManager.States.SceneScore;
+			}
 		}
 	}
 }

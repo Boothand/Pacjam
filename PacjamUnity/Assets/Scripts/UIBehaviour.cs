@@ -43,7 +43,12 @@ public class UIBehaviour : MonoBehaviour
 				{
 					introScreen.alpha = Mathf.Lerp(introScreen.alpha, 0, Time.deltaTime * fadeOut);
 					runScreen.alpha = Mathf.Lerp(runScreen.alpha, 0, Time.deltaTime * fadeOut);
-					blackScreen.alpha = Mathf.Lerp(blackScreen.alpha, 0, Time.deltaTime * 5);
+
+					if (GameManager.instance.player.timeSpentVictory >= 0.66f)
+					{
+						blackScreenTimer += Time.deltaTime;
+						blackScreen.alpha = Mathf.Lerp(0, 1, blackScreenTimer);
+					}
 				}
 				break;
 
