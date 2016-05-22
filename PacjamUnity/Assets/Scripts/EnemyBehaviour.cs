@@ -178,7 +178,7 @@ public class EnemyBehaviour : MonoBehaviour
 
 		//print("I must go " + distanceToTarget.x + " units in X, and " + distanceToTarget.z + " units in Z.");
 
-		float dirToGo = (distanceToTarget.x > distanceToTarget.z) ? distanceToTarget.x : distanceToTarget.z;
+		//float dirToGo = (distanceToTarget.x > distanceToTarget.z) ? distanceToTarget.x : distanceToTarget.z;
 		float xDir, zDir = 0;
 
 		if (Mathf.Abs(distanceToTarget.x) >= Mathf.Abs(distanceToTarget.z))
@@ -212,6 +212,11 @@ public class EnemyBehaviour : MonoBehaviour
 
 	void Update ()
 	{
+		if (GameManager.instance.state == GameManager.States.SceneDead)
+		{
+			anim.SetTrigger("Celebrate");
+		}
+
 		if (dropped)
 		{
 			transform.position = dropPoint + Vector3.up * dropCurve.Evaluate(dropStep);
