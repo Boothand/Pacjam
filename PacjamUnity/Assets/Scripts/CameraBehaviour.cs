@@ -25,6 +25,8 @@ public class CameraBehaviour : MonoBehaviour
 	
 	void Update ()
 	{
+		float rSpeed = speed;
+
 		switch (GameManager.instance.state)
 		{
 			case GameManager.States.SceneInfo:
@@ -41,10 +43,15 @@ public class CameraBehaviour : MonoBehaviour
 				Vector3 playerPos = GameManager.instance.player.transform.position;
 				targetPosition = Vector3.Lerp(gamePositionGoal.position, playerPos, playerViewOffset);
 				targetRotation = Quaternion.LookRotation(playerPos - transform.position, Vector3.up);
+				rSpeed = 5f;
+				break;
+			case GameManager.States.SceneScore:
+				targetPosition = transform.position;
+				targetRotation = transform.rotation;
 				break;
 		}
 
 		transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * speed);
-		transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * speed);
+		transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * rSpeed);
 	}
 }

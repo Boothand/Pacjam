@@ -23,6 +23,7 @@ public class GameManager : MonoBehaviour
 		SceneLoad,
 		SceneRun,
 		SceneSuccess,
+		SceneScore,
 		SceneDead
 	}
 
