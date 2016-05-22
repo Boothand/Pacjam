@@ -31,11 +31,11 @@ public class ScoreScreen : MonoBehaviour
 	int oldTotalScore;
 	[HideInInspector] public int newTotalScore;
 
-	float pauseTime = 0.3f;
+	float pauseTime = 0.25f;
 	float CurrentPauseTime = 0.5f;
 
-	float countSpeed = 30f;
-	float countTotalSpeed = 60f;
+	float countSpeed = 50f;
+	float countTotalSpeed = 80f;
 
 	void Start()
 	{
