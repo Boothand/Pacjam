@@ -263,6 +263,7 @@ public class PlayerController : MonoBehaviour
 			trappedTarget.transform.SetParent(null);
 			trappedTarget.GetComponent<EnemyBehaviour>().GetDropped();
 			trappedTarget = null;
+			kills++;
 		}
 	}
 
@@ -327,14 +328,18 @@ public class PlayerController : MonoBehaviour
 				isVictory = true;
 			}
 
-			timeSpentVictory += Time.deltaTime * victoryAnimationSpeed;
-			transform.position = victoryStartPos + Vector3.up * victoryCurve.Evaluate(timeSpentVictory);
+			timeSpentVictory += Time.deltaTime;
+			transform.position = victoryStartPos + Vector3.up * victoryCurve.Evaluate(timeSpentVictory * victoryAnimationSpeed);
 
-			if (timeSpentVictory >= 1)
+			if (timeSpentVictory >= 5f)
 			{
-				//GameManager.instance.SceneGoToNext();
 				GameManager.instance.state = GameManager.States.SceneScore;
 			}
+		}
+
+		if (GameManager.instance.state == GameManager.States.SceneRun)
+		{
+			timeUsed += Time.deltaTime;
 		}
 	}
 }

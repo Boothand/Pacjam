@@ -47,7 +47,7 @@ public class CameraBehaviour : MonoBehaviour
 				break;
 			case GameManager.States.SceneScore:
 				targetPosition = transform.position;
-				targetRotation = transform.rotation;
+				targetRotation = Quaternion.LookRotation(GameManager.instance.player.transform.position - transform.position, Vector3.up);
 				break;
 		}
 
