@@ -20,7 +20,7 @@ public class PHPRead : MonoBehaviour
 	{
 		string url = "http://worldofaxaka.com/wobbly/read.php";
 		//enable under on WebGL build
-		url = "read.php";
+		//url = "read.php";
 
 		tx.text = "Loading...";
 		WWW www = new WWW(url);

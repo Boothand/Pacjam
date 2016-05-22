@@ -27,6 +27,8 @@ public class EnemyBehaviour : MonoBehaviour
 	public LayerMask friendLayer;
 	public float dropSpeed = 1f;
 
+	bool failedToMove = false;
+
 	void Start ()
 	{
 		if (!target)
@@ -80,26 +82,13 @@ public class EnemyBehaviour : MonoBehaviour
 
 		float rayLength = 0.8f;
 
-		if (Mathf.Abs(direction.x) > 0)
+		
+		bool hit = Physics.Raycast(transform.position, direction, rayLength, collisionLayer);
+
+		if (hit)
 		{
-			bool topHit = Physics.Raycast(horizontalTop, direction, rayLength, collisionLayer);
-			bool bottomHit = Physics.Raycast(horizontalBottom, direction, rayLength, collisionLayer);
-
-			if (topHit || bottomHit)
-			{
-				canGo = false;
-			}
-		}
-
-		if (Mathf.Abs(direction.z) > 0)
-		{
-			bool leftHit = Physics.Raycast(verticalLeft, direction, rayLength, collisionLayer);
-			bool rightHit = Physics.Raycast(verticalRight, direction, rayLength, collisionLayer);
-
-			if (leftHit || rightHit)
-			{
-				canGo = false;
-			}
+			print("leftHit || rightHit");
+			canGo = false;
 		}
 
 		if (Mathf.Abs(direction.magnitude) > 0)
@@ -108,6 +97,7 @@ public class EnemyBehaviour : MonoBehaviour
 
 			if (friendHit)
 			{
+				print("Hit Friend");
 				return false;
 			}
 		}
@@ -126,11 +116,11 @@ public class EnemyBehaviour : MonoBehaviour
 
 			if (hitInfo.transform)
 			{
-				//print("Hit something down");
 				hitLength = Vector2.Distance(hitInfo.point, rayEndPos);
 			}
 			else
 			{
+				print("Too Deep");
 				return false;
 			}
 
@@ -138,7 +128,10 @@ public class EnemyBehaviour : MonoBehaviour
 
 			float remainder = 1 - hitLength;
 			if (remainder > 0.35 || remainder < -0.35)
+			{
+				print("Not withing 0.35 || -0.35 margin");
 				return false;
+			}
 
 
 			targetPosition.y += remainder;
@@ -231,15 +224,13 @@ public class EnemyBehaviour : MonoBehaviour
 
 		if (GameManager.instance.state != GameManager.States.SceneRun)
 			return;
-		
 
-		if (target)
-        {
-			direction = DirectionTowardsTarget();
-        }
 
-		if (!isMoving && !trapped)
+		if (target && !isMoving && !trapped)
 		{
+			if (!failedToMove)
+			direction = DirectionTowardsTarget();
+
 			targetPosition = transform.position + direction;
 			fromPosition = transform.position;
 			
@@ -249,6 +240,16 @@ public class EnemyBehaviour : MonoBehaviour
 				{
 					isMoving = true;
 					anim.SetTrigger("Jump");
+					failedToMove = false;
+				}
+				else
+				{
+					int random = Random.Range(0, 2);
+					if (random == 0)
+						random = -1;
+					direction = Quaternion.Euler(0, 90 * random, 0) * direction;
+					failedToMove = true;
+					print("Tried new Direction " + direction);
 				}
 			}
 		}
@@ -256,7 +257,7 @@ public class EnemyBehaviour : MonoBehaviour
 		if (isMoving && !trapped)
 		{
 			MoveTo(fromPosition, targetPosition);
-
+			//Debug.DrawLine(fromPosition, targetPosition, Color.blue);
 			transform.forward = Vector3.Slerp(transform.forward, direction, Time.deltaTime * 3);
 
 			if (HasReachedTargetPos())
