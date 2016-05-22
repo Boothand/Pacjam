@@ -32,6 +32,7 @@ public class PlayerController : MonoBehaviour
 	[SerializeField] float victoryTimeEnd = 6f;
 	[SerializeField] AnimationCurve victoryCurve;
 	[SerializeField] float victoryAnimationSpeed = 0.3f;
+	ParticleSystem starBurst;
 	Vector3 victoryStartPos;
 	bool isDead;
 	bool isVictory;
@@ -46,6 +47,7 @@ public class PlayerController : MonoBehaviour
 	void Start()
 	{
 		audioSrc = GetComponentInChildren<AudioSource>();
+		starBurst = GetComponentInChildren<ParticleSystem>();
 		GameManager.instance.player = this;
 	}
 
@@ -331,6 +333,8 @@ public class PlayerController : MonoBehaviour
 			timeSpentVictory += Time.deltaTime;
 			transform.position = victoryStartPos + Vector3.up * victoryCurve.Evaluate(timeSpentVictory * victoryAnimationSpeed);
 
+			
+
 			if (timeSpentVictory >= 5f)
 			{
 				GameManager.instance.state = GameManager.States.SceneScore;
@@ -341,5 +345,8 @@ public class PlayerController : MonoBehaviour
 		{
 			timeUsed += Time.deltaTime;
 		}
+
+		if (timeSpentVictory*victoryAnimationSpeed >= 0.5f)
+				starBurst.Emit(Mathf.RoundToInt(50*Time.deltaTime));
 	}
 }

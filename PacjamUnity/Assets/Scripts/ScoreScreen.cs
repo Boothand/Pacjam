@@ -29,9 +29,13 @@ public class ScoreScreen : MonoBehaviour
 	float candyDisplay, timeDisplay, killDisplay, sumDisplay, totalDisplay;
 
 	int oldTotalScore;
-	int newTotalScore;
+	[HideInInspector] public int newTotalScore;
 
-	float pauseTime = 0.5f;
+	float pauseTime = 0.3f;
+	float CurrentPauseTime = 0.5f;
+
+	float countSpeed = 30f;
+	float countTotalSpeed = 60f;
 
 	void Start()
 	{
@@ -40,7 +44,7 @@ public class ScoreScreen : MonoBehaviour
 		newTotalScore = oldTotalScore;
 		
 		totalDisplay = oldTotalScore;
-		
+		GameManager.instance.scoreScreen = this;
 
 		candyText.text = "";
 		timeText.text = "";
@@ -61,8 +65,8 @@ public class ScoreScreen : MonoBehaviour
 
 		if (show)
 		{
-			if (pauseTime > 0)
-				pauseTime -= Time.deltaTime;
+			if (CurrentPauseTime > 0)
+				CurrentPauseTime -= Time.deltaTime;
 			else
 			{
 				switch (pos)
@@ -70,7 +74,7 @@ public class ScoreScreen : MonoBehaviour
 					case 0:
 						if ((int)candyDisplay < GameManager.instance.player.candy)
 						{
-							candyDisplay += Time.deltaTime * 25;
+							candyDisplay += Time.deltaTime * countSpeed;
 							candyText.text = "x" + Mathf.RoundToInt(candyDisplay);
 							auds.Play();
 						}
@@ -79,14 +83,14 @@ public class ScoreScreen : MonoBehaviour
 							candyDisplay = GameManager.instance.player.candy;
 							candyText.text = "x" + Mathf.RoundToInt(candyDisplay);
 							pos++;
-							pauseTime = 0.5f;
+							CurrentPauseTime = pauseTime;
 						}
 						break;
 
 					case 1:
 						if ((int)timeDisplay < (int)Mathf.Clamp(100 - (int)GameManager.instance.player.timeUsed, 0, 100))
 						{
-							timeDisplay += Time.deltaTime * 25;
+							timeDisplay += Time.deltaTime * countSpeed;
 							timeText.text = "x" + Mathf.RoundToInt(timeDisplay);
 							auds.Play();
 						}
@@ -95,14 +99,14 @@ public class ScoreScreen : MonoBehaviour
 							timeDisplay = (int)Mathf.Clamp(100 - (int)GameManager.instance.player.timeUsed, 0, 100);
 							timeText.text = "x" + Mathf.RoundToInt(timeDisplay);
 							pos++;
-							pauseTime = 0.5f;
+							CurrentPauseTime = pauseTime;
 						}
 						break;
 
 					case 2:
 						if ((int)killDisplay < GameManager.instance.player.kills * killPoints)
 						{
-							killDisplay += Time.deltaTime * 25;
+							killDisplay += Time.deltaTime * countSpeed;
 							killText.text = "x" + Mathf.RoundToInt(killDisplay);
 							auds.Play();
 						}
@@ -111,7 +115,7 @@ public class ScoreScreen : MonoBehaviour
 							killDisplay = GameManager.instance.player.kills * killPoints;
 							killText.text = "x" + Mathf.RoundToInt(killDisplay);
 							pos++;
-							pauseTime = 0.5f;
+							CurrentPauseTime = pauseTime;
 						}
 						break;
 
@@ -122,7 +126,7 @@ public class ScoreScreen : MonoBehaviour
 							oldTotalScore;
 						if ((int)totalDisplay < newTotalScore)
 						{
-							totalDisplay += Time.deltaTime * 50;
+							totalDisplay += Time.deltaTime * countTotalSpeed;
 							totalText.text = "x" + Mathf.RoundToInt(totalDisplay);
 							auds.Play();
 						}
@@ -131,7 +135,7 @@ public class ScoreScreen : MonoBehaviour
 							totalDisplay = newTotalScore;
 							totalText.text = "x" + Mathf.RoundToInt(totalDisplay);
 							pos++;
-							pauseTime = 0.5f;
+							CurrentPauseTime = pauseTime;
 						}
 						break;
 					case 4:
