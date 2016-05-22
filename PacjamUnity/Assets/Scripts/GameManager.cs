@@ -11,6 +11,8 @@ public class GameManager : MonoBehaviour
 	public static GameManager instance;
 	public static int score;
 	public static int lives = 3;
+
+	public static bool gamePaused;
 	
 	public int candyAmount;
 	public PlayerController player;
@@ -81,6 +83,23 @@ public class GameManager : MonoBehaviour
 		if (candyAmount <= 0 && state == States.SceneRun)
 		{
 			state = States.SceneSuccess;
+		}
+
+		if (state == States.SceneRun)
+		{
+			if (Input.GetButtonDown("Pause"))
+			{
+				if (!gamePaused)
+				{
+					gamePaused = true;
+					Time.timeScale = 0f;
+				}
+				else
+				{
+					gamePaused = false;
+					Time.timeScale = 1f;
+				}
+			}
 		}
 	}
 }
