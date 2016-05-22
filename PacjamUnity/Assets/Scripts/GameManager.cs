@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour
 	//
 	[HideInInspector] public ScoreIndicator scoreScript;
 	[HideInInspector] public LivesIndicator livesScript;
+	[HideInInspector] public ScoreScreen scoreScreen;
 
 	//public static
 	public static GameManager instance;
@@ -25,6 +26,20 @@ public class GameManager : MonoBehaviour
 		SceneSuccess,
 		SceneScore,
 		SceneDead
+	}
+
+	void Reset()
+	{
+		score = 0;
+		lives = 3;
+		state = GameManager.States.SceneInfo;
+		candyAmount = 0;
+	}
+
+	public void NewGame()
+	{
+		Reset();
+		SceneGoToNext();
 	}
 
 	void Awake()
@@ -75,6 +90,19 @@ public class GameManager : MonoBehaviour
 			if (Input.GetButtonDown("Submit"))
 			{
 				state = States.SceneLoad;
+			}
+		}
+
+		if (state == States.SceneScore)
+		{
+			if (scoreScreen.finished)
+			{
+				if(Input.GetButtonDown("Submit"))
+				{
+					GameManager.score = scoreScreen.newTotalScore;
+					state = States.SceneInfo;
+					SceneGoToNext();
+				}
 			}
 		}
 
