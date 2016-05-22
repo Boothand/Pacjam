@@ -19,9 +19,6 @@ public class Candy : MonoBehaviour
 	{
 		if (col.GetComponent<PlayerController>())
 		{
-			Stats player = col.GetComponent<Stats>();
-
-			player.Score += score;
 			GameManager.score += score;
 
 			scoreText.gameObject.SetActive(true);
