@@ -21,6 +21,9 @@ public class Candy : MonoBehaviour
 		{
 			//GameManager.score += score;
 			col.GetComponent<PlayerController>().candy++;
+			AudioSource auds = GetComponentInChildren<AudioSource>();
+			auds.Play();
+			auds.transform.SetParent(null);
 
 			scoreText.gameObject.SetActive(true);
 			scoreText.transform.SetParent(null);

@@ -48,7 +48,4 @@ public class ScoreText : MonoBehaviour
 		gameObject.SetActive(false);
 	}
 	
-	void Update ()
-	{
-	}
 }
