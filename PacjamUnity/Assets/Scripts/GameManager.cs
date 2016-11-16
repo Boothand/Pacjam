@@ -89,7 +89,7 @@ public class GameManager : MonoBehaviour
 	{
 		if (state == States.SceneInfo)
 		{
-			if (Input.GetButtonDown("Submit"))
+			if (Input.anyKeyDown)
 			{
 				state = States.SceneLoad;
 			}
@@ -99,7 +99,7 @@ public class GameManager : MonoBehaviour
 		{
 			if (scoreScreen.finished)
 			{
-				if(Input.GetButtonDown("Submit"))
+				if(Input.anyKeyDown)
 				{
 					GameManager.score = scoreScreen.newTotalScore;
 					state = States.SceneInfo;

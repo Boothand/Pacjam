@@ -22,8 +22,16 @@ public class ScoreText : MonoBehaviour
 		if (!fading)
 		{
 			fading = true;
+			gameObject.SetActive(true);
 			StartCoroutine(FadeAndMove());
 		}
+	}
+
+	public void Reset()
+	{
+		fading = false;
+		canvasGroup.alpha = 1f;
+		transform.localPosition = Vector3.zero;
 	}
 
 	public void SetText(string text)
@@ -42,9 +50,8 @@ public class ScoreText : MonoBehaviour
 		{
 			canvasGroup.alpha -= Time.deltaTime * fadeSpeed;
 			transform.position += Vector3.up * Time.deltaTime * speed;
-			yield return new WaitForEndOfFrame();
+			yield return null;
 		}
-
 		gameObject.SetActive(false);
 	}
 	

@@ -218,8 +218,14 @@ public class EnemyBehaviour : MonoBehaviour
 
 		if (dropped)
 		{
-			transform.position = dropPoint + Vector3.up * dropCurve.Evaluate(dropStep);
 			dropStep += Time.deltaTime;
+			transform.position = dropPoint + Vector3.up * dropCurve.Evaluate(dropStep);
+
+			if (dropStep >= 0.3f)
+			{
+				GetComponent<Rigidbody>().velocity = new Vector3(0, -15f, 0);
+				this.enabled = false;
+			}
 		}
 
 		if (GameManager.instance.state != GameManager.States.SceneRun)

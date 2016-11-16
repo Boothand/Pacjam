@@ -60,7 +60,18 @@ public class ScoreScreen : MonoBehaviour
 		{
 			return;
 		}
+
+		if (Input.anyKey) // turn up the speed
+		{
+			countSpeed = 150f;
+			countTotalSpeed = 300f;
+			CurrentPauseTime = 0f;
+		}
 		else
+		{
+			countSpeed = 50f;
+			countTotalSpeed = 80f;
+		}
 
 
 		if (show)

@@ -8,7 +8,8 @@ public class PlayerController : MonoBehaviour
 	[Header("Movement")]
 	public AnimationCurve moveCurve;
 	public float moveDuration = 1f;
-	[Range(0, 1)] public float slopeHeight = 0.35f;
+	[Range(0, 1)]
+	public float slopeHeight = 0.35f;
 	bool isMoving;
 	Vector3 direction;
 	Vector3 targetPosition;
@@ -27,11 +28,14 @@ public class PlayerController : MonoBehaviour
 	public LayerMask enemyLayer;
 
 	[Header("Animations")]
-	[SerializeField] float resurrectTime = 3f;
-	[SerializeField] float victoryTime = 3f;
-	[SerializeField] float victoryTimeEnd = 6f;
-	[SerializeField] AnimationCurve victoryCurve;
-	[SerializeField] float victoryAnimationSpeed = 0.3f;
+	[SerializeField]
+	float resurrectTime = 3f;
+	[SerializeField]
+	float victoryFadeTime = 3f;
+	[SerializeField]
+	AnimationCurve victoryCurve;
+	[SerializeField]
+	float victoryAnimationSpeed = 0.3f;
 	ParticleSystem starBurst;
 	Vector3 victoryStartPos;
 	bool isDead;
@@ -79,7 +83,7 @@ public class PlayerController : MonoBehaviour
 
 			joint.spring = spring;
 		}
-	
+
 		//Animation.
 		//Timers, states.
 	}
@@ -112,7 +116,7 @@ public class PlayerController : MonoBehaviour
 		{
 			bool topHit = Physics.Raycast(horizontalTop, direction, rayLength, collisionLayer);
 			bool bottomHit = Physics.Raycast(horizontalBottom, direction, rayLength, collisionLayer);
-			
+
 			if (topHit || bottomHit)
 			{
 				canGo = false;
@@ -142,28 +146,28 @@ public class PlayerController : MonoBehaviour
 
 			float hitLength = 0;
 
-            if (hitInfo.transform)
-            {
-                //print("Hit something down");
-                hitLength = Vector2.Distance(hitInfo.point, rayEndPos);
-            }
-            else
-            {
-                return false;
-            }
+			if (hitInfo.transform)
+			{
+				//print("Hit something down");
+				hitLength = Vector2.Distance(hitInfo.point, rayEndPos);
+			}
+			else
+			{
+				return false;
+			}
 
-            
+
 
 			float remainder = 1 - hitLength;
-            if (remainder > 0.35 || remainder < -0.35)
-                return false;
+			if (remainder > 0.35 || remainder < -0.35)
+				return false;
 
 
-            targetPosition.y += remainder;
+			targetPosition.y += remainder;
 
-            targetPosition = new Vector3(Mathf.RoundToInt(targetPosition.x), targetPosition.y, Mathf.RoundToInt(targetPosition.z));
+			targetPosition = new Vector3(Mathf.RoundToInt(targetPosition.x), targetPosition.y, Mathf.RoundToInt(targetPosition.z));
 		}
-		
+
 		return true;
 	}
 
@@ -174,7 +178,7 @@ public class PlayerController : MonoBehaviour
 		//pos.y = transform.position.y;
 
 		lerpValue += Time.deltaTime;
-        
+
 
 		if (lerpValue > moveDuration)
 		{
@@ -183,7 +187,7 @@ public class PlayerController : MonoBehaviour
 
 		float moveJourney = lerpValue / moveDuration;
 
-        //print(moveCurve.Evaluate(moveJourney));
+		//print(moveCurve.Evaluate(moveJourney));
 
 		moveToAngle = Quaternion.Euler(90 * direction.z, 0, 90 * -direction.x) * fromRotation;
 		transform.position = Vector3.MoveTowards(from, targetPosition, moveCurve.Evaluate(moveJourney));
@@ -194,7 +198,7 @@ public class PlayerController : MonoBehaviour
 	{
 		//print(transform.position.x + " " + targetPosition.x);
 		//print(transform.position.z + " " + targetPosition.z);
-		if ( Vector3.Distance(new Vector3(transform.position.x, 0, transform.position.z), new Vector3(targetPosition.x, 0, targetPosition.z)) < 0.01f)
+		if (Vector3.Distance(new Vector3(transform.position.x, 0, transform.position.z), new Vector3(targetPosition.x, 0, targetPosition.z)) < 0.01f)
 		{
 			transform.position = targetPosition;
 			lerpValue = 0;
@@ -258,7 +262,7 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
-	void EnemyDrop()
+	bool EnemyDrop()
 	{
 		if (trappedTarget && HasReachedTargetPos())
 		{
@@ -266,7 +270,9 @@ public class PlayerController : MonoBehaviour
 			trappedTarget.GetComponent<EnemyBehaviour>().GetDropped();
 			trappedTarget = null;
 			kills++;
+			return true;
 		}
+		return false;
 	}
 
 	void OnTriggerStay(Collider col)
@@ -275,13 +281,17 @@ public class PlayerController : MonoBehaviour
 		{
 			if (trappedTarget)
 			{
-				EnemyDrop();
-				col.transform.root.GetComponent<DumpingSlab>().PlaySound();
+				if (EnemyDrop())
+				{
+					DumpingSlab dump = col.transform.root.GetComponent<DumpingSlab>();
+					dump.PlaySound();
+					dump.PlayScoreText();
+				}
 			}
 		}
 	}
 
-	void Update ()
+	void Update()
 	{
 		if (!isDead)
 		{
@@ -333,9 +343,9 @@ public class PlayerController : MonoBehaviour
 			timeSpentVictory += Time.deltaTime;
 			transform.position = victoryStartPos + Vector3.up * victoryCurve.Evaluate(timeSpentVictory * victoryAnimationSpeed);
 
-			
 
-			if (timeSpentVictory >= 5f)
+
+			if (timeSpentVictory >= victoryFadeTime)
 			{
 				GameManager.instance.state = GameManager.States.SceneScore;
 			}
@@ -346,7 +356,7 @@ public class PlayerController : MonoBehaviour
 			timeUsed += Time.deltaTime;
 		}
 
-		if (timeSpentVictory*victoryAnimationSpeed >= 0.5f)
-				starBurst.Emit(Mathf.RoundToInt(50*Time.deltaTime));
+		if (timeSpentVictory * victoryAnimationSpeed >= 0.5f)
+			starBurst.Emit(Mathf.RoundToInt(50 * Time.deltaTime));
 	}
 }

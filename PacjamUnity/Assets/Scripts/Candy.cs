@@ -43,10 +43,11 @@ public class Candy : MonoBehaviour
 
 			transform.root.gameObject.SetActive(false);
 		}
-	}
-	
-	void Update ()
-	{
 
+		if (col.GetComponent<EnemyBehaviour>())
+		{
+			GameManager.instance.candyAmount--;
+			Destroy(gameObject);
+		}
 	}
 }

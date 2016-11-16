@@ -9,16 +9,16 @@ public class UIBehaviour : MonoBehaviour
 	float fadeInn = 1f;
 	float fadeOut = 20f;
 
-	float blackScreenTimer = 0;
+	float blackFadeSpeed = 3f;
 
-	void Start ()
+	void Start()
 	{
 		introScreen.alpha = 0;
 		runScreen.alpha = 0;
 		blackScreen.alpha = 1;
 	}
-	
-	void Update ()
+
+	void Update()
 	{
 		switch (GameManager.instance.state)
 		{
@@ -45,18 +45,22 @@ public class UIBehaviour : MonoBehaviour
 				{
 					introScreen.alpha = Mathf.Lerp(introScreen.alpha, 0, Time.deltaTime * fadeOut);
 					runScreen.alpha = Mathf.Lerp(runScreen.alpha, 0, Time.deltaTime * fadeOut);
-					
 
-					if (GameManager.instance.player.timeSpentVictory >= 4f)
+
+					if (GameManager.instance.player.timeSpentVictory >= 3f)
 					{
-						blackScreenTimer += Time.deltaTime;
-						blackScreen.alpha = Mathf.Lerp(0, 1, blackScreenTimer);
+						//blackScreenTimer += Time.deltaTime;
+						//blackScreen.alpha = Mathf.Lerp(0, 1, blackScreenTimer);
+						blackScreen.alpha = Mathf.Lerp(blackScreen.alpha, 1, Time.deltaTime * blackFadeSpeed);
 						scoreScreen.alpha = Mathf.Lerp(scoreScreen.alpha, 1, Time.deltaTime * 0.33f);
 					}
 				}
 				break;
 			case GameManager.States.SceneScore:
-				scoreScreen.alpha = Mathf.Lerp(scoreScreen.alpha, 1, Time.deltaTime * 0.33f);
+				{
+					blackScreen.alpha = Mathf.Lerp(blackScreen.alpha, 1, Time.deltaTime * blackFadeSpeed);
+					scoreScreen.alpha = Mathf.Lerp(scoreScreen.alpha, 1, Time.deltaTime * 0.33f);
+				}
 				break;
 
 			case GameManager.States.SceneDead:
@@ -66,8 +70,7 @@ public class UIBehaviour : MonoBehaviour
 						introScreen.alpha = Mathf.Lerp(introScreen.alpha, 0, Time.deltaTime * fadeOut);
 						runScreen.alpha = Mathf.Lerp(runScreen.alpha, 0, Time.deltaTime * fadeOut);
 
-						blackScreenTimer += Time.deltaTime;
-						blackScreen.alpha = Mathf.Lerp(0, 1, blackScreenTimer);
+						blackScreen.alpha = Mathf.Lerp(blackScreen.alpha, 1, Time.deltaTime * blackFadeSpeed);
 					}
 				}
 				break;
